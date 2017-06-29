@@ -1,13 +1,16 @@
-//package ru.innopolis.ps.repository;
-//
-//import org.springframework.data.jpa.repository.JpaRepository;
-//import ru.innopolis.ps.model.Word;
-//
-//import java.util.Collection;
-//
-///**
-// * Created by pavel on 29.06.17.
-// */
-//public interface WordRepository extends JpaRepository<Word, Long> {
-//    //Collection<Word>
-//}
+package ru.innopolis.ps.repository;
+
+import org.springframework.data.repository.CrudRepository;
+import ru.innopolis.ps.model.WordPersistent;
+
+import java.util.List;
+
+/**
+ * Created by pavel on 29.06.17.
+ */
+public interface WordRepository extends CrudRepository<WordPersistent, Long> {
+
+    List<WordPersistent> findByWord(String word);
+
+
+}

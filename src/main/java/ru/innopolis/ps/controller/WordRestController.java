@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.innopolis.ps.dao.DAO;
-import ru.innopolis.ps.dao.DAOMock;
-import ru.innopolis.ps.model.Word2;
+import ru.innopolis.ps.dao.Dao;
+import ru.innopolis.ps.dao.DaoMock;
+import ru.innopolis.ps.model.Word;
+
+import java.util.List;
 
 /**
  * Created by pavel on 28.06.17.
@@ -15,30 +17,35 @@ import ru.innopolis.ps.model.Word2;
 public class WordRestController {
 
     //AtomicLong idGenerator = new AtomicLong();
-    private DAO dao = new DAOMock();
-    private Logger logger = LoggerFactory.getLogger("WordController logger");
+    private Dao dao = new DaoMock();
+    private Logger logger = LoggerFactory.getLogger(WordRestController.class);
     private static final int DEFAULT_ID = 0;
 
     @RequestMapping(value = "/words", method = RequestMethod.GET)
-    public Word2 showWordWithDefaultId() {
+    public Word showWordWithDefaultId() {
         return dao.getWord(DEFAULT_ID);
     }
 
     @RequestMapping(value = "/words/{id}", method = RequestMethod.GET)
-    public Word2 showWord(@PathVariable(required = false, name = "id") String id) {
+    public Word showWord(@PathVariable(required = false, name = "id") String id) {
         long idValue;
         try {
             idValue = Long.parseLong(id);
         } catch (Exception e) {
-            logger.error("Incorrect value (not long) is found in id. The default value is used.");
+            logger.error("Incorrect id. The default value is used.");
             idValue = DEFAULT_ID;
         }
         return dao.getWord(idValue);
     }
 
-//    @RequestMapping(value = "/words", method = RequestMethod.POST)
-//    public ResponseEntity<?> addWord(@PathVariable String word, @PathVariable String translation) {
-//        dao.addWord(word, translation);
-//        return ResponseEntity.noContent().build();
-//    }
+    @RequestMapping(value = "/words/list", method = RequestMethod.GET)
+    public List<Word> showWords() {
+        return dao.getAllWords();
+    }
+
+    @RequestMapping(value = "/words", method = RequestMethod.POST)
+    public ResponseEntity<Word> addWord(@RequestBody Word input) {
+        dao.addWord(input.getWord(), input.getTranslation());
+        return ResponseEntity.noContent().build();
+    }
 }
